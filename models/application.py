@@ -8,10 +8,9 @@ import re
 # Application name: letters and digits only, must not start with a digit, no hyphen
 APPLICATION_NAME_PATTERN = re.compile(r"^[a-zA-Z][a-zA-Z0-9]*$")
 
-class RbacEntry(BaseModel):
-    """RBAC entry: role bound to groups and/or users."""
+class Admins(BaseModel):
+    """Admins: groups and/or users with admin rights on the application."""
 
-    role: str = Field(..., description="Role (e.g. admin, view)")
     groups: Optional[list[str]] = Field(default=None, description="List of groups (e.g. oidc:devbox_admins)")
     users: Optional[list[str]] = Field(default=None, description="List of users (e.g. oidc:user@ensg.eu)")
 
@@ -20,7 +19,8 @@ class Application(BaseModel):
     """Application definition (namespace, quotas, RBAC)."""
 
     name: str = Field(..., description="Application name (namespace)")
-    rbac: Optional[list[RbacEntry]] = Field(default=None, description="Optional RBAC rules")
+    description: Optional[str] = Field(default=None, description="Application description")
+    admins: Optional[Admins] = Field(default=None, description="Optional admins (groups and/or users)")
 
     @field_validator("name")
     @classmethod

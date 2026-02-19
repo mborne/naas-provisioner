@@ -4,10 +4,11 @@ This experimental operator aims at synchronization K8S namespaces according to a
 
 ## Parameters
 
-| Name                    | Description                                         |
-| ----------------------- | --------------------------------------------------- |
-| `APPLICATIONS_URL`      | The URL of the YAML files defining the applications |
-| `DRY_RUN`               | Only display actions                                |
+| Name                         | Description                                         |
+| ---------------------------- | --------------------------------------------------- |
+| `APPLICATIONS_URL`           | The URL of the YAML files defining the applications |
+| `DRY_RUN`                    | Only display actions                                |
+| `NAAS_POLL_INTERVAL_SECONDS` | Update frequency                                    |
 
 ## Development
 

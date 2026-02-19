@@ -1,0 +1,7 @@
+import os
+
+APPLICATIONS_URL = os.getenv("NAAS_APPLICATIONS_URL")
+if not APPLICATIONS_URL:
+    raise ValueError("NAAS_APPLICATIONS_URL is not set")
+
+POLL_INTERVAL_SECONDS = int(os.getenv("NAAS_POLL_INTERVAL_SECONDS", "30"))

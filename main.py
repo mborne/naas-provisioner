@@ -1,14 +1,10 @@
-import os
 import time
 import requests
 import yaml
 
+from config import APPLICATIONS_URL, POLL_INTERVAL_SECONDS
 from models import Application
 from services.kubernetes import delete_namespace, get_managed_namespaces, create_namespace, update_namespace
-
-APPLICATIONS_URL = os.getenv("NAAS_APPLICATIONS_URL")
-if not APPLICATIONS_URL:
-    raise ValueError("NAAS_APPLICATIONS_URL is not set")
 
 
 def get_applications() -> list[Application]:
@@ -49,7 +45,7 @@ def main():
                 create_namespace(app.name, app)
             else:
                 update_namespace(app.name, app)
-        time.sleep(1)
+        time.sleep(POLL_INTERVAL_SECONDS)
 
 
 if __name__ == "__main__":

@@ -1,19 +1,28 @@
-- name: app1
-  # quotas:
-  #   memory: 1G
-  #   cpu: 1
-  rbac:
-    - role: admin
-      groups: [oidc:devbox_admins]
-    - role: view
-      groups: [oidc:devbox_dev]
+- name: demo
+  description: "Demo application for the devbox"
+  admins:
+    groups: [oidc:devbox_admins]
+    users: [oidc:student1@ensg.eu,oidc:student2@ensg.eu]
+
 - name: student1
-  rbac:
-    - role: admin
-      users:
-      - oidc:student1@ensg.eu
+  description: "A namespace for student1"
+  admins:
+    groups: [oidc:devbox_admins]
+    users: [oidc:student1@ensg.eu]
+
 - name: student2
-  rbac:
-    - role: admin
-      users:
-      - oidc:student2@ensg.eu
+  admins:
+    groups: [oidc:devbox_admins]
+    users: [oidc:student2@ensg.eu]
+
+# The provisioner will skip the creation of the namespace if it already exists
+# - name: whoami
+#   description: "Will be skipped by the provisioner if the namespace already exists"
+#   rbac: []
+
+# - name: bad-name
+#   rbac:
+#     - role: admin
+#       users:
+#       - oidc:student2@ensg.eu
+

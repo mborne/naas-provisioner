@@ -1,0 +1,12 @@
+---
+description: Write code and comments in English
+alwaysApply: true
+---
+
+# Code and comments in English
+
+- Write all **source code** (identifiers, string literals in code) in English.
+- Write all **comments** and **docstrings** in English.
+- Keep user-facing messages (logs, errors, CLI) in English unless the product explicitly targets another language.
+
+Apply this in every file you create or edit.

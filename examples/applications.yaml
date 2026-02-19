@@ -1,0 +1,19 @@
+- name: app1
+  quotas:
+    memory: 1G
+    cpu: 1
+  rbac:
+    - role: admin
+      groups: [oidc:devbox_admins]
+    - role: view
+      groups: [oidc:devbox_dev]
+- name: student1
+  rbac:
+    - role: admin
+      users:
+      - oidc:student1@ensg.eu
+- name: student2
+  rbac:
+    - role: admin
+      users:
+      - oidc:student2@ensg.eu

@@ -7,12 +7,10 @@
 - name: student1
   description: "A namespace for student1"
   admins:
-    groups: [oidc:devbox_admins]
     users: [oidc:student1@ensg.eu,oidc:student2@ensg.eu]
 
 - name: student2
   admins:
-    groups: [oidc:devbox_admins]
     users: [oidc:student2@ensg.eu]
 
 # The provisioner will skip the creation of the namespace if it already exists

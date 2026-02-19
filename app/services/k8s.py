@@ -23,7 +23,8 @@ _load_kubernetes_config()
 api_instance = client.CoreV1Api()
 rbac_api = client.RbacAuthorizationV1Api()
 
-def has_namespace(name: str) -> bool:
+def namespace_exists(name: str) -> bool:
+    """Check if the namespace exists."""
     try:
         api_instance.read_namespace(name)
         return True
@@ -32,11 +33,12 @@ def has_namespace(name: str) -> bool:
             return False
         raise e
 
-def get_namespace(name: str) -> client.V1Namespace:
+def namespace_by_name(name: str) -> client.V1Namespace:
+    """Get the namespace by name."""
     return api_instance.read_namespace(name)
 
 
-def get_managed_namespaces() -> list[str]:
+def namespace_find_managed() -> list[str]:
     """Get the list of the managed namespaces with the managed-by=naas-provisioner label."""
 
     logger.debug("get the list of the managed namespaces with the managed-by=%s label", MANAGED_BY_LABEL)
@@ -46,12 +48,12 @@ def get_managed_namespaces() -> list[str]:
     ).items]
 
 
-def create_namespace(app: Application) -> None:
+def namespace_create(app: Application) -> None:
     """Create the kubernetes namespace for the given application."""
 
     app_name = app.name
 
-    if has_namespace(app_name):
+    if namespace_exists(app_name):
         logger.warning(
             "[%s] namespace already exists without the managed-by=%s label manually. Please add it manually.",
             app_name,
@@ -67,32 +69,35 @@ def create_namespace(app: Application) -> None:
     api_instance.create_namespace(
         client.V1Namespace(metadata=client.V1ObjectMeta(name=app_name, labels={"managed-by": MANAGED_BY_LABEL}))
     )
-    update_namespace(app_name, app)
+    namespace_update(app_name, app)
 
 
-def update_namespace(name: str, app: Application) -> None:
+def namespace_update(app: Application) -> None:
     """Update the namespace with the application definition."""
+
+    app_name = app.name
+
     if DRY_RUN:
-        logger.info("[%s] skip update namespace (DRY_RUN=1)", name)
+        logger.info("[%s] skip update namespace (DRY_RUN=1)", app_name)
         return
 
-    namespace = get_namespace(name)
+    namespace = namespace_by_name(app_name)
 
     # update the namespace description
     expected_description = app.description or app.name
     if namespace.metadata.annotations is None or namespace.metadata.annotations.get("description") != expected_description:
-        logger.info("[%s] update description ...", name)
-        api_instance.patch_namespace(name, client.V1Namespace(
-            metadata=client.V1ObjectMeta(name=name, labels={"managed-by": MANAGED_BY_LABEL}, annotations={"description": expected_description})
+        logger.info("[%s] update description ...", app_name)
+        api_instance.patch_namespace(app_name, client.V1Namespace(
+            metadata=client.V1ObjectMeta(name=app_name, labels={"managed-by": MANAGED_BY_LABEL}, annotations={"description": expected_description})
         ))
     else:
-        logger.info("[%s] description is already up to date", name)
+        logger.info("[%s] description is up to date", app_name)
 
     # update the admins RoleBindings
-    create_or_update_admins_rolebinding(app)
+    rolebinding_create_or_update_admins(app)
 
 
-def delete_namespace(name: str) -> None:
+def namespace_delete(name: str) -> None:
     """Delete the kubernetes namespace for the given name."""
     if DRY_RUN:
         logger.info("[dry-run] delete namespace %s", name)
@@ -105,44 +110,55 @@ def delete_namespace(name: str) -> None:
 # RBAC management
 #-------------------------------------------------------------------------------------------------------
 
-def has_rolebinding(namespace: str, name: str) -> bool:
-    try:
-        rbac_api.read_namespaced_role_binding(name, namespace)
-        return True
-    except client.ApiException as e:
-        if e.status == 404:
-            return False
-        raise e
 
-
-def create_or_update_admins_rolebinding(app: Application) -> None:
+def rolebinding_create_or_update_admins(app: Application) -> None:
     """Create or update the admins RoleBinding for the namespace."""
     if DRY_RUN:
         logger.info("[dry-run] create or update admins RoleBinding for namespace %s", app.name)
         return
 
     rolebinding_name = f"naas-provisioner-admins"
+    users = []
+    if app.admins is not None and app.admins.users is not None:
+        users = app.admins.users
 
-    if has_rolebinding(app.name, rolebinding_name):
-        update_rolebinding(app.name, rolebinding_name, users=app.admins.users, groups=app.admins.groups)
+    groups = []
+    if app.admins is not None and app.admins.groups is not None:
+        groups = app.admins.groups
+
+    if rolebinding_exists(app.name, rolebinding_name):
+        rolebinding_update(app.name, rolebinding_name, users=users, groups=groups)
     else:
-        create_rolebinding(app.name, rolebinding_name, users=app.admins.users, groups=app.admins.groups)
+        rolebinding_create(app.name, rolebinding_name, users=users, groups=groups)
 
+
+def rolebinding_exists(app_name: str, rolebinding_name: str) -> bool:
+    """Check if the rolebinding exists."""
+    try:
+        rbac_api.read_namespaced_role_binding(rolebinding_name, app_name)
+        return True
+    except client.ApiException as e:
+        if e.status == 404:
+            return False
+        raise e
 
 def users_to_subjects(users: list[str]|None) -> list[client.RbacV1Subject]:
+    """Convert the users to subjects."""
     if users is None:
         return []
     return [client.RbacV1Subject(kind="User", name=user) for user in users]
 
 def groups_to_subjects(groups: list[str]|None) -> list[client.RbacV1Subject]:
+    """Convert the groups to subjects."""
     if groups is None:
         return []
     return [client.RbacV1Subject(kind="Group", name=group) for group in groups]
 
-def create_rolebinding(app_name: str, rolebinding_name: str, users: list[str], groups: list[str]) -> None:
+
+def rolebinding_create(app_name: str, rolebinding_name: str, users: list[str], groups: list[str]) -> None:
     """Create a RoleBinding for the namespace."""
     if DRY_RUN:
-        logger.info("[dry-run] create rolebinding %s for namespace %s", rolebinding_name, app_name)
+        logger.info("[%s] skip create rolebinding %s (DRY_RUN=1)", app_name, rolebinding_name)
         return
 
     logger.info("[%s] create rolebinding %s ...", app_name, rolebinding_name)
@@ -153,17 +169,21 @@ def create_rolebinding(app_name: str, rolebinding_name: str, users: list[str], g
         subjects=users_to_subjects(users) + groups_to_subjects(groups),
     ))
 
-def update_rolebinding(app_name: str, rolebinding_name: str, users: list[str], groups: list[str]) -> None:
+def rolebinding_update(app_name: str, rolebinding_name: str, users: list[str], groups: list[str]) -> None:
     """Update a RoleBinding for the namespace."""
-    if DRY_RUN:
-        logger.info("[dry-run] update rolebinding %s for namespace %s", rolebinding_name, app_name)
-        return
 
     current_subjects = rbac_api.read_namespaced_role_binding(rolebinding_name, app_name).subjects
+    if current_subjects is None:
+        current_subjects = []
+
     current_users = [subject.name for subject in current_subjects if subject.kind == "User"]
     current_groups = [subject.name for subject in current_subjects if subject.kind == "Group"]
     if current_users == users and current_groups == groups:
-        logger.info("[%s] rolebinding %s is already up to date", app_name, rolebinding_name)
+        logger.info("[%s] rolebinding %s is up to date", app_name, rolebinding_name)
+        return
+
+    if DRY_RUN:
+        logger.info("[%s] skip update rolebinding %s (DRY_RUN=1)", app_name, rolebinding_name)
         return
 
     logger.info("[%s] update rolebinding %s ...", app_name, rolebinding_name )

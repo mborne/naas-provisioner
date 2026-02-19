@@ -7,4 +7,4 @@ COPY app/ app/
 
 RUN pip install --no-cache-dir .
 
-CMD ["naas-provisioner"]
+CMD ["naas-provisioner","--loop"]

@@ -1,5 +1,5 @@
 - name: demo
-  description: "Demo application for the devbox"
+  description: "Demo application for the devbox that rocks!"
   admins:
     groups: [oidc:devbox_admins]
     users: [oidc:student1@ensg.eu,oidc:student2@ensg.eu]

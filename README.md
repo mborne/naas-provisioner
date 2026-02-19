@@ -1,6 +1,6 @@
 # naas-provisioner
 
-An **experimental** *Namespace as service* operator provisioning K8S namespaces according to a list of applications provided by an URL :
+An **experimental** operator provisioning K8S namespaces according to a list of applications provided by an URL :
 
 ![Architecture](docs/architecture.drawio.png)
 

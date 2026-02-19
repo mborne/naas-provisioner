@@ -1,13 +1,7 @@
-import os
-
 from kubernetes import client, config
 
+from app.config import ADMINS_CLUSTER_ROLE, DRY_RUN, MANAGED_BY_LABEL
 from app.models import Application
-
-DRY_RUN = os.getenv("NAAS_DRY_RUN", "0").lower() == "1"
-MANAGED_BY_LABEL = "naas-provisioner"
-
-ADMIN_CLUSTER_ROLE = os.getenv("ADMIN_CLUSTER_ROLE", "admin")
 
 config.load_kube_config()
 
@@ -131,7 +125,7 @@ def create_rolebinding(app_name: str, rolebinding_name: str, users: list[str], g
     rbac_api.create_namespaced_role_binding(app_name, client.V1RoleBinding(
         metadata=client.V1ObjectMeta(name=rolebinding_name, labels={"managed-by": MANAGED_BY_LABEL}),
         role_ref=client.V1RoleRef(
-            api_group="rbac.authorization.k8s.io", kind="ClusterRole", name=ADMIN_CLUSTER_ROLE),
+            api_group="rbac.authorization.k8s.io", kind="ClusterRole", name=ADMINS_CLUSTER_ROLE),
         subjects=users_to_subjects(users) + groups_to_subjects(groups),
     ))
 
@@ -151,6 +145,6 @@ def update_rolebinding(app_name: str, rolebinding_name: str, users: list[str], g
     print(f"[info] update rolebinding {rolebinding_name} for namespace {app_name}")
     rbac_api.patch_namespaced_role_binding(rolebinding_name, app_name, client.V1RoleBinding(
         role_ref=client.V1RoleRef(
-            api_group="rbac.authorization.k8s.io", kind="ClusterRole", name=ADMIN_CLUSTER_ROLE),
+            api_group="rbac.authorization.k8s.io", kind="ClusterRole", name=ADMINS_CLUSTER_ROLE),
         subjects=users_to_subjects(users) + groups_to_subjects(groups),
     ))

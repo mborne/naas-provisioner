@@ -12,6 +12,7 @@ An **experimental** operator aiming at synchronization K8S namespaces according 
 | Name                         | Description                                              | Default             |
 | ---------------------------- | -------------------------------------------------------- | ------------------- |
 | `NAAS_APPLICATIONS_URL`      | The URL of the YAML files defining the applications [^1] | None (**required**) |
+| `NAAS_ADMINS_CLUSTER_ROLE`    | The ClusterRole assigned to the app admins               | "admin"             |
 | `NAAS_DRY_RUN`               | Set to 1 to display operations                           | 0                   |
 | `NAAS_POLL_INTERVAL_SECONDS` | Update loop frequency                                    | 30                  |
 

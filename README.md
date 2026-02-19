@@ -5,22 +5,50 @@ An **experimental** operator aiming at synchronization K8S namespaces according 
 ## Motivation
 
 - Provisioning namespaces for students.
-- Allow app managment in a side app (naas-manager) providing the application list.
+- Dynamic provisioning from an external application catalog (ex : naas-manager, k8slab, betalab,...).
+
+## Features
+
+Given a collection of applications provided as an URL (see [examples/applications.yaml](examples/applications.yaml)) this tool run a loop to :
+
+- Create, update or remove the corresponding namespaces with `app.name` == `namespace.name`
+- Configure a RoleBinding (`naas-providers-admins`) binding the "admin" role on the namespace for the `app.admins`.
+
+Note that :
+
+- A `managed-by=naas-provisioner` label is configured on the resources (existing namespace without this label are ignored)
 
 ## Parameters
 
-| Name                         | Description                                              | Default             |
-| ---------------------------- | -------------------------------------------------------- | ------------------- |
-| `NAAS_APPLICATIONS_URL`      | The URL of the YAML files defining the applications [^1] | None (**required**) |
-| `NAAS_ADMINS_CLUSTER_ROLE`    | The ClusterRole assigned to the app admins               | "admin"             |
-| `NAAS_DRY_RUN`               | Set to 1 to display operations                           | 0                   |
-| `NAAS_POLL_INTERVAL_SECONDS` | Update loop frequency                                    | 30                  |
+| Name                         | Description                                             | Default             |
+| ---------------------------- | ------------------------------------------------------- | ------------------- |
+| `NAAS_APPLICATIONS_URL`      | The URL of the YAML files defining the applications (1) | None (**required**) |
+| `NAAS_ADMINS_CLUSTER_ROLE`   | The ClusterRole assigned to the app admins              | "admin"             |
+| `NAAS_DRY_RUN`               | Set to 1 to display operations                          | 0                   |
+| `NAAS_POLL_INTERVAL_SECONDS` | Update loop frequency                                   | 30                  |
 
-[^1]: Path allowed for development purpose.
+> (1) A path like examples/applications.yaml is allowed for development purpose.
 
-## Development
+## Usage
+
+### For development purpose
 
 ```bash
-uv run naas-provisioner
+# Configure applications source
+export NAAS_APPLICATION_URL=examples/applications.yaml
+
+# WARNING : it will use the current context in your KUBECONFIG
+export NAAS_DRY_RUN=0
+
+# Run synchronize loop
+uv run naas-provisioner --loop
 ```
+
+### Deploying in Kubernetes
+
+> Kustomize manifests coming soon...
+
+## License
+
+[MIT](LICENSE)
 

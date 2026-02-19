@@ -1,31 +1,9 @@
 import argparse
 import time
-import requests
-import yaml
 
-from app.config import APPLICATIONS_URL, POLL_INTERVAL_SECONDS
-from app.models import Application
+from app.config import POLL_INTERVAL_SECONDS
+from app.services.applications import get_applications
 from app.services.kubernetes import delete_namespace, get_managed_namespaces, create_namespace, update_namespace
-
-
-def get_applications() -> list[Application]:
-    """Get the applications from the URL or the file."""
-
-    if APPLICATIONS_URL.startswith("http") or APPLICATIONS_URL.startswith("https"):
-        apps = requests.get(APPLICATIONS_URL).json()
-    else:
-        with open(APPLICATIONS_URL, "r") as file:
-            apps = yaml.safe_load(file)
-
-    # filter out and report invalid applications
-    valid_applications = []
-    for app in apps:
-        try:
-            valid_applications.append(Application.model_validate(app))
-        except ValueError as e:
-            print(f"Invalid application: {app['name']} - {e}")
-
-    return valid_applications
 
 
 def synchronize():

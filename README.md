@@ -1,6 +1,8 @@
 # naas-provisioner
 
-An **experimental** *Namespace as service* operator provisioning K8S namespaces according to a list of applications provided by an URL.
+An **experimental** *Namespace as service* operator provisioning K8S namespaces according to a list of applications provided by an URL :
+
+![Architecture](docs/architecture.drawio.png)
 
 ## Motivation
 
@@ -23,10 +25,6 @@ Note that :
 
 - A `managed-by=naas-provisioner` label is configured on the resources (existing namespace without this label are ignored)
 - It might be extended in the futur to configure Quotas, NetworkPolicies,...
-
-## Architecture
-
-![Architecture](docs/architecture.drawio.png)
 
 ## Parameters
 

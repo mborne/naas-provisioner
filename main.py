@@ -1,21 +1,15 @@
-from kubernetes import client, config
+import os
 import time
 import requests
-import os
 import yaml
 
 from models import Application
+from services.kubernetes import delete_namespace, get_current_namespaces, create_namespace, update_namespace
 
 APPLICATIONS_URL = os.getenv("NAAS_APPLICATIONS_URL")
 if not APPLICATIONS_URL:
     raise ValueError("NAAS_APPLICATIONS_URL is not set")
 
-config.load_kube_config()
-
-api_instance = client.CoreV1Api()
-
-def get_current_namespaces():
-    return [namespace.metadata.name for namespace in api_instance.list_namespace().items]
 
 def get_applications() -> list[Application]:
     """Get the applications from the URL or the file."""
@@ -25,20 +19,38 @@ def get_applications() -> list[Application]:
     else:
         with open(APPLICATIONS_URL, "r") as file:
             apps = yaml.safe_load(file)
-    return [Application.model_validate(app) for app in apps]
+
+    # filter out and report invalid applications
+    valid_applications = []
+    for app in apps:
+        try:
+            valid_applications.append(Application.model_validate(app))
+        except ValueError as e:
+            print(f"Invalid application: {app['name']} - {e}")
+
+    return valid_applications
+
 
 def main():
     while True:
         current_namespaces = get_current_namespaces()
-        print(current_namespaces)
         expected_applications = get_applications()
-        for application in expected_applications:
-            if application.name not in current_namespaces:
-                api_instance.create_namespace(client.V1Namespace(metadata=client.V1ObjectMeta(name=application.name)))
+
+        expected_applications_names = [app.name for app in expected_applications]
+
+        # Delete namespaces that are not in the expected applications
+        for ns_name in current_namespaces:
+            if ns_name not in expected_applications_names:
+                delete_namespace(ns_name)
+
+        # Create or update namespaces that are in the expected applications       
+        for app in expected_applications:
+            if app.name not in current_namespaces:
+                create_namespace(app.name, app)
             else:
-                #api_instance.delete_namespace(application.name)
-                pass
-        time.sleep(30)
+                update_namespace(app.name, app)
+        time.sleep(1)
+
 
 if __name__ == "__main__":
     main()

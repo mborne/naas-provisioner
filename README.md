@@ -6,7 +6,8 @@ This experimental operator aims at synchronization K8S namespaces according to a
 
 | Name                    | Description                                         |
 | ----------------------- | --------------------------------------------------- |
-| `NAAS_APPLICATIONS_URL` | The URL of the YAML files defining the applications |
+| `APPLICATIONS_URL`      | The URL of the YAML files defining the applications |
+| `DRY_RUN`               | Only display actions                                |
 
 ## Development
 

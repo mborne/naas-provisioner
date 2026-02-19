@@ -57,7 +57,6 @@ def update_namespace(name: str, app: Application) -> None:
         metadata=client.V1ObjectMeta(name=name, labels={"managed-by": MANAGED_BY_LABEL}
     )))
 
-
 def delete_namespace(name: str) -> None:
     """Supprime un namespace Kubernetes avec le nom donné."""
     if DRY_RUN:

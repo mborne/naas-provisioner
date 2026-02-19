@@ -1,7 +1,7 @@
 - name: app1
-  quotas:
-    memory: 1G
-    cpu: 1
+  # quotas:
+  #   memory: 1G
+  #   cpu: 1
   rbac:
     - role: admin
       groups: [oidc:devbox_admins]

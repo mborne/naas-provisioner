@@ -1,3 +1,3 @@
-from .application import Application, ApplicationQuotas, RbacEntry
+from .application import Application, RbacEntry
 
-__all__ = ["Application", "ApplicationQuotas", "RbacEntry"]
+__all__ = ["Application", "RbacEntry"]

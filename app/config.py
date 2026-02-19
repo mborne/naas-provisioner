@@ -1,3 +1,4 @@
+import logging
 import os
 
 APPLICATIONS_URL = os.getenv("NAAS_APPLICATIONS_URL")
@@ -13,3 +14,14 @@ MANAGED_BY_LABEL = "naas-provisioner"
 
 # ClusterRole name for the admins.
 ADMINS_CLUSTER_ROLE = os.getenv("NAAS_ADMINS_CLUSTER_ROLE", "admin")
+
+_LOG_LEVELS = {
+    "debug": logging.DEBUG,
+    "info": logging.INFO,
+    "warning": logging.WARNING,
+    "error": logging.ERROR,
+    "critical": logging.CRITICAL,
+}
+_log_level_name = os.getenv("NAAS_LOG_LEVEL", "info").strip().lower()
+LOG_LEVEL = _LOG_LEVELS.get(_log_level_name, logging.INFO)
+

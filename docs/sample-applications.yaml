@@ -8,7 +8,7 @@
   description: "A namespace for student1"
   admins:
     groups: [oidc:devbox_admins]
-    users: [oidc:student1@ensg.eu]
+    users: [oidc:student1@ensg.eu,oidc:student2@ensg.eu]
 
 - name: student2
   admins:
@@ -18,11 +18,6 @@
 # The provisioner will skip the creation of the namespace if it already exists
 # - name: whoami
 #   description: "Will be skipped by the provisioner if the namespace already exists"
-#   rbac: []
 
 # - name: bad-name
-#   rbac:
-#     - role: admin
-#       users:
-#       - oidc:student2@ensg.eu
-
+#   description: "Will be skipped as name is not valid"

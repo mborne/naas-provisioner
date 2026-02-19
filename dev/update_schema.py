@@ -2,8 +2,11 @@
 """Export the JSON schema for applications (applications.yaml) in YAML format."""
 
 import argparse
+import logging
 import sys
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 # Add project root to path when run as script
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -27,11 +30,16 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(levelname)s: %(message)s",
+    )
+
     schema = ApplicationsList.model_json_schema()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with open(args.output, "w", encoding="utf-8") as f:
         yaml.dump(schema, f, default_flow_style=False, sort_keys=False, allow_unicode=True)
-    print(f"Schema written to {args.output}")
+    logger.info("Schema written to %s", args.output)
     return 0
 
 

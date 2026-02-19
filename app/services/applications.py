@@ -1,8 +1,12 @@
+import logging
+
 import requests
 import yaml
 
 from app.config import APPLICATIONS_URL
 from app.models import Application
+
+logger = logging.getLogger(__name__)
 
 def get_applications() -> list[Application]:
     """Get the applications from the URL or the file."""
@@ -13,6 +17,8 @@ def get_applications() -> list[Application]:
     # - get_applications_from_crds() as a true operator would do.
     #
     # ... but I prefer decoupling the logic from the data source.
+
+    logger.info("get the applications from %s ...", APPLICATIONS_URL)
 
     if APPLICATIONS_URL.startswith("http") or APPLICATIONS_URL.startswith("https"):
         apps = requests.get(APPLICATIONS_URL).json()
@@ -26,6 +32,7 @@ def get_applications() -> list[Application]:
         try:
             valid_applications.append(Application.model_validate(app))
         except ValueError as e:
-            print(f"Invalid application: {app['name']} - {e}")
+            logger.warning("[%s] Invalid application: %s", app["name"], str(e))
 
+    logger.info("found %d valid applications.", len(valid_applications))
     return valid_applications

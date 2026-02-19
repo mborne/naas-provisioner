@@ -1,7 +1,15 @@
 import argparse
+import logging
 import time
 
-from app.config import POLL_INTERVAL_SECONDS
+from app.config import LOG_LEVEL, POLL_INTERVAL_SECONDS
+
+logging.basicConfig(
+    level=LOG_LEVEL,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger(__name__)
 from app.services.applications import get_applications
 from app.services.kubernetes import delete_namespace, get_managed_namespaces, create_namespace, update_namespace
 
@@ -21,7 +29,7 @@ def synchronize():
     # Create or update namespaces that are in the expected applications
     for app in expected_applications:
         if app.name not in current_namespaces:
-            create_namespace(app.name, app)
+            create_namespace(app)
         else:
             update_namespace(app.name, app)
 

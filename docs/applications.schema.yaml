@@ -1,0 +1,52 @@
+$defs:
+  Admins:
+    description: 'Admins: groups and/or users with admin rights on the application.'
+    properties:
+      groups:
+        anyOf:
+        - items:
+            type: string
+          type: array
+        - type: 'null'
+        default: null
+        description: List of groups (e.g. oidc:devbox_admins)
+        title: Groups
+      users:
+        anyOf:
+        - items:
+            type: string
+          type: array
+        - type: 'null'
+        default: null
+        description: List of users (e.g. oidc:user@ensg.eu)
+        title: Users
+    title: Admins
+    type: object
+  Application:
+    description: Application definition (namespace, quotas, RBAC).
+    properties:
+      name:
+        description: Application name (namespace)
+        title: Name
+        type: string
+      description:
+        anyOf:
+        - type: string
+        - type: 'null'
+        default: null
+        description: Application description
+        title: Description
+      admins:
+        anyOf:
+        - $ref: '#/$defs/Admins'
+        - type: 'null'
+        default: null
+        description: Optional admins (groups and/or users)
+    required:
+    - name
+    title: Application
+    type: object
+items:
+  $ref: '#/$defs/Application'
+title: RootModel[list[Application]]
+type: array

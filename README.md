@@ -1,6 +1,6 @@
 # naas-provisioner
 
-An **experimental** operator aiming at synchronization K8S namespaces according to a list of applications provided by an URL.
+An **experimental** *Namespace as service* operator provisioning K8S namespaces according to a list of applications provided by an URL.
 
 ## Motivation
 
@@ -9,14 +9,19 @@ An **experimental** operator aiming at synchronization K8S namespaces according 
 
 ## Features
 
-Given a collection of applications provided as an URL (see [examples/applications.yaml](examples/applications.yaml)) this tool run a loop to :
+Given a collection of applications provided as an URL (see [docs/samples-applications.yaml](docs/samples-applications.yaml)) this tool run a loop to :
 
 - Create, update or remove the corresponding namespaces with `app.name` == `namespace.name`
-- Configure a RoleBinding (`naas-providers-admins`) binding the "admin" role on the namespace for the `app.admins`.
+- Configure a `"naas-providers-admins"` RoleBinding with the `"admin"` ClusterRole on the namespace for the `app.admins`.
 
 Note that :
 
 - A `managed-by=naas-provisioner` label is configured on the resources (existing namespace without this label are ignored)
+- It might be extended in the futur to configure Quotas, NetworkPolicies,...
+
+## Architecture
+
+![Architecture](docs/architecture.drawio.png)
 
 ## Parameters
 
@@ -35,7 +40,7 @@ Note that :
 
 ```bash
 # Configure applications source
-export NAAS_APPLICATION_URL=examples/applications.yaml
+export NAAS_APPLICATION_URL=docs/sample-applications.yaml
 
 # WARNING : it will use the current context in your KUBECONFIG
 export NAAS_DRY_RUN=0
@@ -47,6 +52,7 @@ uv run naas-provisioner --loop
 ### Deploying in Kubernetes
 
 > Kustomize manifests coming soon...
+
 
 ## License
 

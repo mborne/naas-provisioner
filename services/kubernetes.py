@@ -12,8 +12,17 @@ config.load_kube_config()
 
 api_instance = client.CoreV1Api()
 
-def get_current_namespaces() -> list[str]:
-    """Get the list of the existing namespaces with the managed-by=naas-provisioner label."""
+def has_namespace(name: str) -> bool:
+    try:
+        api_instance.read_namespace(name)
+        return True
+    except client.ApiException as e:
+        if e.status == 404:
+            return False
+        raise e
+
+def get_managed_namespaces() -> list[str]:
+    """Get the list of the managed namespaces with the managed-by=naas-provisioner label."""
     return [namespace.metadata.name for namespace in api_instance.list_namespace(
         label_selector=f"managed-by={MANAGED_BY_LABEL}"
     ).items]
@@ -21,6 +30,11 @@ def get_current_namespaces() -> list[str]:
 
 def create_namespace(name: str, app: Application) -> None:
     """Crée un namespace Kubernetes avec le nom donné."""
+
+    if has_namespace(name):
+        print(f"[warning] namespace {name} already exists, skipping creation! Please add the managed-by={MANAGED_BY_LABEL} label manually.")
+        return
+
     if DRY_RUN:
         print(f"[dry-run] create namespace {name}")
         return

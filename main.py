@@ -4,7 +4,7 @@ import requests
 import yaml
 
 from models import Application
-from services.kubernetes import delete_namespace, get_current_namespaces, create_namespace, update_namespace
+from services.kubernetes import delete_namespace, get_managed_namespaces, create_namespace, update_namespace
 
 APPLICATIONS_URL = os.getenv("NAAS_APPLICATIONS_URL")
 if not APPLICATIONS_URL:
@@ -33,7 +33,7 @@ def get_applications() -> list[Application]:
 
 def main():
     while True:
-        current_namespaces = get_current_namespaces()
+        current_namespaces = get_managed_namespaces()
         expected_applications = get_applications()
 
         expected_applications_names = [app.name for app in expected_applications]

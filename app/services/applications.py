@@ -3,27 +3,23 @@ import logging
 import requests
 import yaml
 
-from app.config import APPLICATIONS_URL
 from app.models import Application
 
 logger = logging.getLogger(__name__)
 
-def get_applications() -> list[Application]:
+def applications_from_url(applications_url: str) -> list[Application]:
     """Get the applications from the URL or the file."""
 
-    # Note that it could be split into two functions:
-    #
-    # - get_applications_from_url()
-    # - get_applications_from_crds() as a true operator would do.
+    # Note that it could be completed with applications_from_crds() as a true operator would do.
     #
     # ... but I prefer decoupling the logic from the data source.
 
-    logger.info("get the applications from %s ...", APPLICATIONS_URL)
+    logger.info("get the applications from %s ...", applications_url)
 
-    if APPLICATIONS_URL.startswith("http") or APPLICATIONS_URL.startswith("https"):
-        apps = requests.get(APPLICATIONS_URL).json()
+    if applications_url.startswith("http") or applications_url.startswith("https"):
+        apps = requests.get(applications_url).json()
     else:
-        with open(APPLICATIONS_URL, "r") as file:
+        with open(applications_url, "r") as file:
             apps = yaml.safe_load(file)
 
     # filter out and report invalid applications

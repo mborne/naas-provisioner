@@ -1,0 +1,12 @@
+[
+  {
+    "name": "demo",
+    "description": "Demo app",
+    "admins": {"groups": ["oidc:admins"]}
+  },
+  {
+    "name": "student1",
+    "description": "Student 1",
+    "admins": {"users": ["oidc:s1@ensg.eu"]}
+  }
+]

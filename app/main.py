@@ -2,7 +2,7 @@ import argparse
 import logging
 import time
 
-from app.config import LOG_LEVEL, POLL_INTERVAL_SECONDS
+from app.config import LOG_LEVEL, POLL_INTERVAL_SECONDS, APPLICATIONS_URL
 
 logging.basicConfig(
     level=LOG_LEVEL,
@@ -10,14 +10,14 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",
 )
 logger = logging.getLogger(__name__)
-from app.services.applications import get_applications
+from app.services.applications import applications_from_url
 from app.services.k8s import namespace_delete, namespace_find_managed, namespace_create, namespace_update
 
 
 def synchronize():
     """Synchronize the namespaces with the applications."""
     current_namespaces = namespace_find_managed()
-    expected_applications = get_applications()
+    expected_applications = applications_from_url(APPLICATIONS_URL)
 
     # Delete namespaces that are not in the expected applications
     expected_applications_names = [app.name for app in expected_applications]

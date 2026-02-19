@@ -1,0 +1,10 @@
+- name: demo
+  description: "Demo application"
+  admins:
+    groups: [oidc:devbox_admins]
+    users: [oidc:user@ensg.eu]
+
+- name: student1
+  description: "Namespace for student1"
+  admins:
+    users: [oidc:student1@ensg.eu]

@@ -1,0 +1,8 @@
+- name: validApp
+  description: "Valid"
+
+- name: bad-name
+  description: "Invalid name (hyphen)"
+
+- name: 2invalid
+  description: "Invalid (starts with digit)"

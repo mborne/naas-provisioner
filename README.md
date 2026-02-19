@@ -59,6 +59,14 @@ uv run naas-provisioner --loop
 > Kustomize manifests coming soon...
 
 
+## Testing
+
+```bash
+uv sync --extra=dev
+uv run pytest
+```
+
+
 ## License
 
 [MIT](LICENSE)

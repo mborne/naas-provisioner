@@ -7,6 +7,11 @@ An **experimental** *Namespace as service* operator provisioning K8S namespaces 
 - Provisioning namespaces for students.
 - Dynamic provisioning from an external application catalog (ex : naas-manager, k8slab, betalab,...).
 
+## Warning
+
+- DON'T USE THIS ON A PROD CLUSTER!
+- DON'T USE THIS WITH ACCESS TO A PROD CLUSTER CONFIGURED IN YOUR KUBECONFIG!
+
 ## Features
 
 Given a collection of applications provided as an URL (see [docs/samples-applications.yaml](docs/samples-applications.yaml)) this tool run a loop to :
@@ -38,12 +43,14 @@ Note that :
 
 ### For development purpose
 
+**WARNING : it will use the current context in your KUBECONFIG!**
+
 ```bash
 # Configure applications source
 export NAAS_APPLICATION_URL=docs/sample-applications.yaml
 
-# WARNING : it will use the current context in your KUBECONFIG
-export NAAS_DRY_RUN=0
+# WARNING : check your current context before switching to 0
+export NAAS_DRY_RUN=1
 
 # Run synchronize loop
 uv run naas-provisioner --loop

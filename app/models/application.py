@@ -14,7 +14,6 @@ class Admins(BaseModel):
     groups: Optional[list[str]] = Field(default=None, description="List of groups (e.g. oidc:devbox_admins)")
     users: Optional[list[str]] = Field(default=None, description="List of users (e.g. oidc:user@ensg.eu)")
 
-
 class Application(BaseModel):
     """Application definition (namespace, quotas, RBAC)."""
 

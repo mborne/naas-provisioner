@@ -8,3 +8,10 @@ dependencies = [
     "kubernetes>=35.0.0",
     "pydantic>=2.0.0",
 ]
+
+[project.scripts]
+naas-provisioner = "app.main:main"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

@@ -2,9 +2,9 @@ import time
 import requests
 import yaml
 
-from config import APPLICATIONS_URL, POLL_INTERVAL_SECONDS
-from models import Application
-from services.kubernetes import delete_namespace, get_managed_namespaces, create_namespace, update_namespace
+from app.config import APPLICATIONS_URL, POLL_INTERVAL_SECONDS
+from app.models import Application
+from app.services.kubernetes import delete_namespace, get_managed_namespaces, create_namespace, update_namespace
 
 
 def get_applications() -> list[Application]:
@@ -39,7 +39,7 @@ def main():
             if ns_name not in expected_applications_names:
                 delete_namespace(ns_name)
 
-        # Create or update namespaces that are in the expected applications       
+        # Create or update namespaces that are in the expected applications
         for app in expected_applications:
             if app.name not in current_namespaces:
                 create_namespace(app.name, app)

@@ -2,10 +2,9 @@ import os
 
 from kubernetes import client, config
 
-from models import Application
+from app.models import Application
 
-#DRY_RUN = os.getenv("DRY_RUN", "0").lower() == "1"
-DRY_RUN = False
+DRY_RUN = os.getenv("NAAS_DRY_RUN", "0").lower() == "1"
 MANAGED_BY_LABEL = "naas-provisioner"
 
 ADMIN_CLUSTER_ROLE = os.getenv("ADMIN_CLUSTER_ROLE", "admin")

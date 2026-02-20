@@ -2,26 +2,26 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: naas-manager
+  name: naas-provisioner
   labels:
-    app.kubernetes.io/name: naas-manager
+    app.kubernetes.io/name: naas-provisioner
     app.kubernetes.io/component: namespace
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: naas-manager-sa
-  namespace: naas-manager
+  name: naas-provisioner-sa
+  namespace: naas-provisioner
   labels:
-    app.kubernetes.io/name: naas-manager
+    app.kubernetes.io/name: naas-provisioner
     app.kubernetes.io/component: service-account
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: naas-manager
+  name: naas-provisioner
   labels:
-    app.kubernetes.io/name: naas-manager
+    app.kubernetes.io/name: naas-provisioner
 rules:
   - apiGroups: [""]
     resources: ["namespaces"]
@@ -33,42 +33,42 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: naas-manager
+  name: naas-provisioner
   labels:
-    app.kubernetes.io/name: naas-manager
+    app.kubernetes.io/name: naas-provisioner
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: naas-manager
+  name: naas-provisioner
 subjects:
   - kind: ServiceAccount
-    name: naas-manager
-    namespace: naas-manager
+    name: naas-provisioner
+    namespace: naas-provisioner
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: naas-manager
-  namespace: naas-manager
+  name: naas-provisioner
+  namespace: naas-provisioner
   labels:
-    app.kubernetes.io/name: naas-manager
+    app.kubernetes.io/name: naas-provisioner
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: naas-manager
+      app.kubernetes.io/name: naas-provisioner
   strategy:
     # avoid paralel updates
     type: Recreate
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: naas-manager
+        app.kubernetes.io/name: naas-provisioner
     spec:
-      serviceAccountName: naas-manager-sa
+      serviceAccountName: naas-provisioner-sa
       containers:
-        - name: naas-manager
-          image: ghcr.io/mborne/naas-manager:main
+        - name: naas-provisioner
+          image: ghcr.io/mborne/naas-provisioner:main
           imagePullPolicy: IfNotPresent
           env:
             - name: NAAS_APPLICATIONS_URL

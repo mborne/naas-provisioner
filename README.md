@@ -7,7 +7,7 @@ An **experimental** operator provisioning K8S namespaces according to a list of 
 ## Motivation
 
 - Provisioning namespaces for students.
-- Dynamic provisioning from an external application catalog (ex : naas-manager, k8slab, betalab,...).
+- Dynamic provisioning from an external application catalog (ex : naas-provisioner, k8slab, betalab,...).
 
 ## Warning
 
@@ -62,8 +62,8 @@ See [docs/deploy/demo.yaml](docs/deploy/demo.yaml) :
 
 ```bash
 # temporary
-docker build -t ghcr.io/mborne/naas-manager:main .
-kind load docker-image ghcr.io/mborne/naas-manager:main --name devbox
+docker build -t ghcr.io/mborne/naas-provisioner:main .
+kind load docker-image ghcr.io/mborne/naas-provisioner:main --name devbox
 
 # deploy
 kubectl apply -f docs/deploy/demo.yaml

@@ -42,7 +42,7 @@ roleRef:
   name: naas-provisioner
 subjects:
   - kind: ServiceAccount
-    name: naas-provisioner
+    name: naas-provisioner-sa
     namespace: naas-provisioner
 ---
 apiVersion: apps/v1

@@ -56,7 +56,18 @@ uv run naas-provisioner --loop
 
 ### Deploying in Kubernetes
 
-> Kustomize manifests coming soon...
+> **in progress**
+
+See [docs/deploy/demo.yaml](docs/deploy/demo.yaml) :
+
+```bash
+# temporary
+docker build -t ghcr.io/mborne/naas-manager:main .
+kind load docker-image ghcr.io/mborne/naas-manager:main --name devbox
+
+# deploy
+kubectl apply -f docs/deploy/demo.yaml
+```
 
 
 ## Testing

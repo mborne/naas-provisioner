@@ -16,7 +16,7 @@ An **experimental** operator provisioning K8S namespaces according to a list of 
 
 ## Features
 
-Given a collection of applications provided as an URL (see [docs/samples-applications.yaml](docs/samples-applications.yaml)) this tool run a loop to :
+Given a collection of applications provided as an URL (see [docs/sample-applications.yaml](docs/sample-applications.yaml)) this tool run a loop to :
 
 - Create, update or remove the corresponding namespaces with `app.name` == `namespace.name`
 - Configure a `"naas-providers-admins"` RoleBinding with the `"admin"` ClusterRole on the namespace for the `app.admins`.

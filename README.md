@@ -66,8 +66,6 @@ uv sync --extra=dev
 uv run pytest
 ```
 
-
 ## License
 
 [MIT](LICENSE)
-
